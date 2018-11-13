@@ -16,12 +16,17 @@ def Load_Dataset():
     data = pd.read_csv('test.csv')
     #必要なデータだけ取り出す
     #https://www.kaggle.com/code1110/houseprice-data-cleaning-visualization
-    data = data[['OverallQual','CentralAir', 'GrLivArea', 'GarageArea',
+    """
+    data = data[['OverallQual','CentralAir', 'GrLivArea',
     'LotArea', 'YearBuilt', 'YearRemodAdd', 'GarageCars', 'BsmtFinSF1',
-    'OverallCond', '1stFlrSF', 'BsmtUnfSF', 'GarageType', 'MSZoning',
-    'Neighborhood', '2ndFlrSF', 'TotalBsmtSF', 'GarageFinish', 'BsmtQual',
-    'OpenPorchSF', 'MoSold', 'BsmtFinType1', 'FireplaceQu', 'KitchenQual',
-    'WoodDeckSF', 'SaleCondition', 'Fireplaces', 'MSSubClass', 'EnclosedPorch']]
+    'BsmtUnfSF', 'GarageType', 'MSZoning', 'GarageFinish', 'BsmtQual',
+    'OpenPorchSF', 'FireplaceQu', 'KitchenQual', 'WoodDeckSF', 'SaleCondition',
+    'Fireplaces', 'EnclosedPorch', 'TotalBsmtSF', '1stFlrSF', '2ndFlrSF',
+    'SalePrice']]
+    """
+    data['TotalHousePorchSF'] = data['EnclosedPorch']+data['OpenPorchSF']+\
+        data['WoodDeckSF']+data['3SsnPorch']+data['ScreenPorch']
+    data.drop(['GarageArea','TotRmsAbvGrd', 'GarageYrBlt'], axis=1, inplace=True)
     #objectを数値に変える処理
     #https://qiita.com/katsu1110/items/a1c3185fec39e5629bcb
     for i in range(data.shape[1]):
@@ -31,10 +36,14 @@ def Load_Dataset():
             data.iloc[:,i] = lbl.transform(list(data.iloc[:,i].values))
     #NaNをなくす
     data = data.fillna(data.median())
+    data['TotalSF'] = data['TotalBsmtSF'] + data['1stFlrSF'] \
+        + data['2ndFlrSF']
+    data['Interaction'] = data['TotalSF']*data['OverallQual']
+    #data = (data - data.mean())/data.std()
     #データを行列に変換
     data = data.as_matrix()
     #テストデータ
-    test  = data.astype('float32')
+    test  = data[:,:].astype('float32')
     #テストデータを返す
     return test
 

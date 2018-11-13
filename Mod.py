@@ -4,7 +4,7 @@ parser = argparse.ArgumentParser(description='Titanic disastar')
 parser.add_argument('--gpu', '-g', default=0, type=int)
 parser.add_argument('--out', '-o', default='result', type=str)
 parser.add_argument('--epoch', '-e', default=1000, type=int)
-parser.add_argument('--batch', '-b', default=128, type=int)
+parser.add_argument('--batch', '-b', default=64, type=int)
 parser.add_argument('--snapshot', '-s', default=100, type=int)
 
 args = parser.parse_args()
